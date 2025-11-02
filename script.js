@@ -190,14 +190,22 @@ function setupSearch() {
             document.querySelectorAll('.person-card').forEach(card => {
                 card.style.display = 'flex';
             });
+            // Remove dynamically added generation 3
+            const gen3 = document.getElementById('generation-3');
+            if (gen3) {
+                gen3.parentElement.remove();
+            }
             return;
         }
         
         // Find all matching person IDs
         const matchingIds = new Set();
+        const foundPersons = [];
+        
         Object.keys(familyData).forEach(id => {
             const person = familyData[id];
             if (person.name.toLowerCase().includes(searchTerm)) {
+                foundPersons.push({ id, person });
                 matchingIds.add(id);
                 
                 // Add all ancestors (parents, grandparents, etc)
@@ -210,6 +218,28 @@ function setupSearch() {
             }
         });
         
+        // Check if any found person has descendants that are generation 3+
+        let needToRenderGeneration3 = false;
+        foundPersons.forEach(({ id }) => {
+            const person = familyData[id];
+            if (person && person.children) {
+                person.children.forEach(childId => {
+                    if (matchingIds.has(childId)) {
+                        const child = familyData[childId];
+                        if (child && child.children && child.children.length > 0) {
+                            needToRenderGeneration3 = true;
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Remove any existing generation 3 from previous search
+        const existingGen3 = document.getElementById('generation-3');
+        if (existingGen3) {
+            existingGen3.parentElement.remove();
+        }
+        
         // Show/hide cards based on matching IDs
         document.querySelectorAll('.person-card').forEach(card => {
             const personId = card.getAttribute('data-person-id');
@@ -219,7 +249,50 @@ function setupSearch() {
                 card.style.display = 'none';
             }
         });
+        
+        // If we need generation 3, dynamically add it
+        if (needToRenderGeneration3) {
+            // Find generation 2 people who have children
+            const gen3Children = [];
+            document.querySelectorAll('#generation-2 .person-card').forEach(card => {
+                const personId = card.getAttribute('data-person-id');
+                const person = getFamilyMember(personId);
+                if (person && matchingIds.has(personId) && person.children && person.children.length > 0) {
+                    gen3Children.push(...person.children.filter(childId => matchingIds.has(childId)));
+                }
+            });
+            
+            if (gen3Children.length > 0) {
+                renderGeneration3(gen3Children);
+            }
+        }
     });
+}
+
+// Dynamically render generation 3 (great-grandchildren)
+function renderGeneration3(childrenIds) {
+    const familyTreeContainer = document.querySelector('.family-tree');
+    
+    const generationContainer = document.createElement('div');
+    const label = document.createElement('div');
+    label.className = 'generation-label';
+    label.textContent = 'Great-Grandchildren';
+    generationContainer.appendChild(label);
+    
+    const generation = document.createElement('div');
+    generation.className = 'generation';
+    generation.id = 'generation-3';
+    
+    childrenIds.forEach(childId => {
+        const child = getFamilyMember(childId);
+        if (child) {
+            const card = createPersonCard(child);
+            generation.appendChild(card);
+        }
+    });
+    
+    generationContainer.appendChild(generation);
+    familyTreeContainer.appendChild(generationContainer);
 }
 
 // Find ancestors of a person
