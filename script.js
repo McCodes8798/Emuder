@@ -250,13 +250,18 @@ function setupSearch() {
         
         // If we need generation 3, dynamically add it
         if (needToRenderGeneration3) {
-            // Find generation 2 people who have children
+            // Only add gen 3 if we found a person in generation 2 directly
             const gen3Children = [];
-            document.querySelectorAll('#generation-2 .person-card').forEach(card => {
-                const personId = card.getAttribute('data-person-id');
-                const person = getFamilyMember(personId);
-                if (person && matchingIds.has(personId) && person.children && person.children.length > 0) {
-                    gen3Children.push(...person.children);
+            
+            // Check if any of the found persons are in generation 2
+            foundPersons.forEach(({ id }) => {
+                const person = familyData[id];
+                if (person && person.children && person.children.length > 0) {
+                    const ancestors = findAncestors(id);
+                    // If person has exactly 2 ancestors, they're in generation 2
+                    if (ancestors.length === 2) {
+                        gen3Children.push(...person.children);
+                    }
                 }
             });
             
