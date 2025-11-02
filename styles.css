@@ -238,6 +238,22 @@ h1 {
     gap: 20px;
 }
 
+.modal-child-card {
+    transition: transform 0.2s ease;
+}
+
+.modal-child-card:hover {
+    transform: translateY(-3px);
+}
+
+.modal-child-card .person-photo {
+    transition: border-color 0.3s ease;
+}
+
+.modal-child-card:hover .person-photo {
+    border-color: #667eea;
+}
+
 .no-children {
     color: #999;
     font-style: italic;

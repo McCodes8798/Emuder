@@ -137,7 +137,7 @@ function showPersonDetails(person) {
                         const child = getFamilyMember(childId);
                         if (!child) return '';
                         return `
-                            <div class="person-card" style="margin-bottom: 20px;">
+                            <div class="person-card modal-child-card" style="margin-bottom: 20px; cursor: pointer;" data-child-id="${childId}">
                                 <img src="${child.image}" alt="${child.name}" class="person-photo" 
                                      style="width: 80px; height: 80px;"
                                      onerror="this.src='https://via.placeholder.com/80x80?text=' + this.alt.charAt(0)">
@@ -151,6 +151,17 @@ function showPersonDetails(person) {
     `;
     
     modal.style.display = 'block';
+    
+    // Add click handlers to modal children
+    document.querySelectorAll('.modal-child-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const childId = e.currentTarget.getAttribute('data-child-id');
+            const child = getFamilyMember(childId);
+            if (child) {
+                showPersonDetails(child);
+            }
+        });
+    });
 }
 
 // Close modal when clicking X
