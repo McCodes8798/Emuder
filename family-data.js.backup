@@ -126,7 +126,8 @@ const familyData = {
     },
     n_child1: { id: 'n_child1', name: 'Emmanuel', image: 'images/profile_image.png', yearBorn: 1990, yearPassed: null, children: [] },
     n_child2: { id: 'n_child2', name: 'Christophe', image: 'images/christophe.jpg', yearBorn: 1992, yearPassed: null, location: 'Boston, MA', children: ['you_child1', 'you_child2'] },
-    you_child1: { id: 'you_child1', name: 'Daniel', image: 'images/Daniel.jpg', yearBorn: 2020, yearPassed: null, children: [] },
+    you_child1: { id: 'you_child1', name: 'Daniel', image: 'images/Daniel.jpg', yearBorn: 2020, yearPassed: null, children: ['daniel_child1'] },
+    daniel_child1: { id: 'daniel_child1', name: 'Mike', image: 'images/profile_image.png', yearBorn: 2045, yearPassed: null, children: [] },
     you_child2: { id: 'you_child2', name: 'Samuel', image: 'images/Samuel.jpg', yearBorn: 2022, yearPassed: null, children: [] },
     
     // Pacifique - 4 children
