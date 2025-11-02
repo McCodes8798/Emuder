@@ -200,17 +200,13 @@ function setupSearch() {
             if (person.name.toLowerCase().includes(searchTerm)) {
                 matchingIds.add(id);
                 
-                // Add all ancestors (parents)
+                // Add all ancestors (parents, grandparents, etc)
                 const ancestors = findAncestors(id);
                 ancestors.forEach(ancestor => matchingIds.add(ancestor));
                 
-                // Add all descendants (children)
+                // Add all descendants (children, grandchildren, etc)
                 const descendants = findDescendants(id);
                 descendants.forEach(desc => matchingIds.add(desc));
-                
-                // Add siblings (people with same parents)
-                const siblings = findSiblings(id);
-                siblings.forEach(sibling => matchingIds.add(sibling));
             }
         });
         
@@ -258,26 +254,6 @@ function findDescendants(personId) {
     });
     
     return descendants;
-}
-
-// Find siblings of a person
-function findSiblings(personId) {
-    const siblings = [];
-    
-    // Find parents
-    const parents = findAncestors(personId);
-    parents.forEach(parentId => {
-        const parent = familyData[parentId];
-        if (parent && parent.children) {
-            parent.children.forEach(childId => {
-                if (childId !== personId) {
-                    siblings.push(childId);
-                }
-            });
-        }
-    });
-    
-    return siblings;
 }
 
 // Initialize the family tree when page loads
