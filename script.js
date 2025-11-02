@@ -193,16 +193,91 @@ function setupSearch() {
             return;
         }
         
-        // Search through all person cards
+        // Find all matching person IDs
+        const matchingIds = new Set();
+        Object.keys(familyData).forEach(id => {
+            const person = familyData[id];
+            if (person.name.toLowerCase().includes(searchTerm)) {
+                matchingIds.add(id);
+                
+                // Add all ancestors (parents)
+                const ancestors = findAncestors(id);
+                ancestors.forEach(ancestor => matchingIds.add(ancestor));
+                
+                // Add all descendants (children)
+                const descendants = findDescendants(id);
+                descendants.forEach(desc => matchingIds.add(desc));
+                
+                // Add siblings (people with same parents)
+                const siblings = findSiblings(id);
+                siblings.forEach(sibling => matchingIds.add(sibling));
+            }
+        });
+        
+        // Show/hide cards based on matching IDs
         document.querySelectorAll('.person-card').forEach(card => {
-            const name = card.querySelector('.person-name').textContent.toLowerCase();
-            if (name.includes(searchTerm)) {
+            const personId = card.getAttribute('data-person-id');
+            if (matchingIds.has(personId)) {
                 card.style.display = 'flex';
             } else {
                 card.style.display = 'none';
             }
         });
     });
+}
+
+// Find ancestors of a person
+function findAncestors(personId) {
+    const ancestors = [];
+    const person = familyData[personId];
+    if (!person) return ancestors;
+    
+    // Find parents
+    Object.keys(familyData).forEach(id => {
+        const potentialParent = familyData[id];
+        if (potentialParent && potentialParent.children && potentialParent.children.includes(personId)) {
+            ancestors.push(id);
+            // Recursively find their ancestors
+            ancestors.push(...findAncestors(id));
+        }
+    });
+    
+    return ancestors;
+}
+
+// Find all descendants of a person
+function findDescendants(personId) {
+    const descendants = [];
+    const person = familyData[personId];
+    if (!person || !person.children) return descendants;
+    
+    person.children.forEach(childId => {
+        descendants.push(childId);
+        // Recursively find their descendants
+        descendants.push(...findDescendants(childId));
+    });
+    
+    return descendants;
+}
+
+// Find siblings of a person
+function findSiblings(personId) {
+    const siblings = [];
+    
+    // Find parents
+    const parents = findAncestors(personId);
+    parents.forEach(parentId => {
+        const parent = familyData[parentId];
+        if (parent && parent.children) {
+            parent.children.forEach(childId => {
+                if (childId !== personId) {
+                    siblings.push(childId);
+                }
+            });
+        }
+    });
+    
+    return siblings;
 }
 
 // Initialize the family tree when page loads
