@@ -155,6 +155,7 @@ function showPersonDetails(person) {
     // Add click handlers to modal children
     document.querySelectorAll('.modal-child-card').forEach(card => {
         card.addEventListener('click', (e) => {
+            e.stopPropagation();
             const childId = e.currentTarget.getAttribute('data-child-id');
             const child = getFamilyMember(childId);
             if (child) {
