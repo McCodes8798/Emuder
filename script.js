@@ -219,19 +219,6 @@ function setupSearch() {
             }
         });
         
-        // Check if any found person is in generation 2 and has children
-        let needToRenderGeneration3 = false;
-        foundPersons.forEach(({ id }) => {
-            const person = familyData[id];
-            if (person && person.children && person.children.length > 0) {
-                // Check if this person is in generation 2
-                const ancestors = findAncestors(id);
-                if (ancestors.length >= 2) { // At least 2 ancestors = generation 2+
-                    needToRenderGeneration3 = true;
-                }
-            }
-        });
-        
         // Remove any existing generation 3 from previous search
         const existingGen3 = document.getElementById('generation-3');
         if (existingGen3) {
@@ -248,26 +235,22 @@ function setupSearch() {
             }
         });
         
-        // If we need generation 3, dynamically add it
-        if (needToRenderGeneration3) {
-            // Only add gen 3 if we found a person in generation 2 directly
-            const gen3Children = [];
-            
-            // Check if any of the found persons are in generation 2
-            foundPersons.forEach(({ id }) => {
-                const person = familyData[id];
-                if (person && person.children && person.children.length > 0) {
-                    const ancestors = findAncestors(id);
-                    // If person has exactly 2 ancestors, they're in generation 2
-                    if (ancestors.length === 2) {
-                        gen3Children.push(...person.children);
-                    }
+        // Check if we need generation 3 - only if someone in generation 2 was directly searched
+        const gen3Children = [];
+        foundPersons.forEach(({ id }) => {
+            const person = familyData[id];
+            if (person && person.children && person.children.length > 0) {
+                const ancestors = findAncestors(id);
+                // If person has exactly 2 ancestors, they're in generation 2
+                if (ancestors.length === 2) {
+                    gen3Children.push(...person.children);
                 }
-            });
-            
-            if (gen3Children.length > 0) {
-                renderGeneration3(gen3Children);
             }
+        });
+        
+        // If we found children of generation 2 people, render generation 3
+        if (gen3Children.length > 0) {
+            renderGeneration3(gen3Children);
         }
     });
 }
