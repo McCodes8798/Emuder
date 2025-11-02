@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Descendants Tate Emmanuel Muderhwa</h1>
+            <p class="subtitle">Click on any family member to explore their extended family</p>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search for family member..." />
+            </div>
+        </header>
+        
+        <div id="family-tree" class="family-tree"></div>
+        
+        <!-- Modal for showing extended family -->
+        <div id="person-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="family-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

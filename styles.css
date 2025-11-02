@@ -1,0 +1,370 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    margin-top: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#search-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.family-tree {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow-x: auto;
+    min-height: 500px;
+}
+
+.generation {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    justify-items: center;
+    gap: 25px;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 20px 0;
+}
+
+.person-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.person-card:hover {
+    transform: translateY(-5px);
+}
+
+.person-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e9ecef;
+    background: #f0f0f0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.person-card:hover .person-photo {
+    border-color: #667eea;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.person-name {
+    margin-top: 10px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    font-size: 0.9rem;
+    word-wrap: break-word;
+}
+
+/* Connector lines */
+.generation::before {
+    content: '';
+    position: absolute;
+    border-top: 2px solid #ddd;
+    width: 100%;
+    z-index: 0;
+}
+
+.parents-connector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.parents-connector .person-card {
+    margin: 0 20px;
+}
+
+.parents-connector .person-card + .person-card::before {
+    content: '💑';
+    position: absolute;
+    left: -40px;
+    font-size: 2rem;
+    z-index: 1;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #667eea;
+}
+
+.modal-info h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-info p {
+    color: #666;
+    margin: 5px 0;
+}
+
+.modal-children {
+    margin-top: 30px;
+}
+
+.modal-children h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.children-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.no-children {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Generation labels */
+.generation-label {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 0 5px;
+    }
+    
+    .family-tree {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
+    .generation {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .person-photo {
+        width: 80px;
+        height: 80px;
+        border: 2px solid #e9ecef;
+    }
+    
+    .person-name {
+        font-size: 0.8rem;
+        margin-top: 8px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    
+    .search-container {
+        max-width: 100%;
+        margin-top: 15px;
+    }
+    
+    #search-input {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+        margin: 10% auto;
+        max-height: 85vh;
+    }
+    
+    .modal-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .modal-info h2 {
+        font-size: 1.5rem;
+    }
+    
+    .modal-info p {
+        font-size: 0.9rem;
+    }
+    
+    .modal-children h3 {
+        font-size: 1.2rem;
+    }
+    
+    .children-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+    
+    .generation {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 12px;
+    }
+    
+    .person-photo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .person-name {
+        font-size: 0.7rem;
+    }
+    
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .children-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 12px;
+    }
+}
+
