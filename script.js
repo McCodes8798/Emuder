@@ -212,25 +212,23 @@ function setupSearch() {
                 const ancestors = findAncestors(id);
                 ancestors.forEach(ancestor => matchingIds.add(ancestor));
                 
-                // Add all descendants (children, grandchildren, etc)
-                const descendants = findDescendants(id);
-                descendants.forEach(desc => matchingIds.add(desc));
+                // Add DIRECT children only, not all descendants
+                if (person.children) {
+                    person.children.forEach(childId => matchingIds.add(childId));
+                }
             }
         });
         
-        // Check if any found person has descendants that are generation 3+
+        // Check if any found person is in generation 2 and has children
         let needToRenderGeneration3 = false;
         foundPersons.forEach(({ id }) => {
             const person = familyData[id];
-            if (person && person.children) {
-                person.children.forEach(childId => {
-                    if (matchingIds.has(childId)) {
-                        const child = familyData[childId];
-                        if (child && child.children && child.children.length > 0) {
-                            needToRenderGeneration3 = true;
-                        }
-                    }
-                });
+            if (person && person.children && person.children.length > 0) {
+                // Check if this person is in generation 2
+                const ancestors = findAncestors(id);
+                if (ancestors.length >= 2) { // At least 2 ancestors = generation 2+
+                    needToRenderGeneration3 = true;
+                }
             }
         });
         
@@ -258,7 +256,7 @@ function setupSearch() {
                 const personId = card.getAttribute('data-person-id');
                 const person = getFamilyMember(personId);
                 if (person && matchingIds.has(personId) && person.children && person.children.length > 0) {
-                    gen3Children.push(...person.children.filter(childId => matchingIds.has(childId)));
+                    gen3Children.push(...person.children);
                 }
             });
             
